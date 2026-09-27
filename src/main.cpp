@@ -26,6 +26,10 @@ int main(){
         {4, "Market", true},
         {5, "University", false}
     };
+    unordered_map<int, int> idToIndex;
+    for (int i = 0; i < stations.size(); i++) {
+        idToIndex[stations[i].id] = i;
+    }
     for (const auto& station : stations) {
         printStation(station);
     }
