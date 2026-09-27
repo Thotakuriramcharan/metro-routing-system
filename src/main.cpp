@@ -3,32 +3,63 @@ using namespace std;
 #include "../include/Edge.h"
 #include "../include/Station.h"
 int main(){
-    vector<Station> stations = {
-        Station(1, "Central", {"Blue"}, true),
-        Station(2, "Airport", {"Blue"}, false),
-        Station(3, "Park", {"Blue"}, false),
-        Station(4, "Market", {"Red"}, true),
-        Station(5, "University", {"Red"}, false)
-    };
-    unordered_map<int, int> idToIndex;
-    for (size_t i = 0; i < stations.size(); i++) {
-        idToIndex[stations[i].getId()] = i;
+    ifstream file("data/mini_network.txt");
+    if (!file) {
+        cout << "Could not open network file" << endl;
+        return 1;
     }
-    for (const auto& station : stations) {
-        cout << station.getId() << " "
-            << station.getName() << " "
-            << station.getIsInterchange() << '\n';
+    string line;
+    bool readingStations = false;
+    bool readingConnections = false;
+    vector<Station> loadedStations;
+    vector<Edge> loadedEdges;
+    while (getline(file, line)) {
+        if (line.empty()) {
+            continue;
+        }
+        if (line == "#STATIONS") {
+            readingStations = true;
+            readingConnections = false;
+            continue;
+        }
+        if (line == "#CONNECTIONS") {
+            readingStations = false;
+            readingConnections = true;
+            continue;
+        }
+        if (readingStations) {
+            stringstream ss(line);
+            string id;
+            string name;
+            string lineName;
+            getline(ss, id, ',');
+            getline(ss, name, ',');
+            getline(ss, lineName, ',');
+            if (id.empty() || name.empty() || lineName.empty()) {
+                cout << "Invalid station line: " << line << endl;
+                continue;
+            }
+            int stationId = stoi(id);
+            Station station(stationId, name, {lineName}, false);
+            loadedStations.push_back(station);
+        }
+        if (readingConnections) {
+            stringstream ss(line);
+            string from;
+            string to;
+            string distance;
+            getline(ss, from, ',');
+            getline(ss, to, ',');
+            getline(ss, distance, ',');
+            int fromId = stoi(from);
+            int toId = stoi(to);
+            double distanceKm = stod(distance);
+            Edge edge(fromId, toId, distanceKm);
+            loadedEdges.push_back(edge);
+        }
     }
-    Edge e1(1, 2, 3.5);
-    Edge e2(2, 3, 1.8);
-    Edge e3(3, 4, 2.4);
-        cout << e1.getDistance() << endl;
-        e1.setClosed();
-    if (e1.getStatus() == Status::CLOSED) {
-        cout << "Edge is closed" << endl;
-    }
-        e1.setOpen();
-    if (e1.getStatus() == Status::OPEN) {
-        cout << "Edge is open" << endl;
-    }
+    cout << "Loaded " << loadedStations.size()
+         << " stations and "
+         << loadedEdges.size()
+         << " connections" << endl;
 }
