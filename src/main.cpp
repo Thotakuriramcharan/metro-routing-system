@@ -1,5 +1,6 @@
 #include<bits/stdc++.h>
 using namespace std;
+#include "../include/MetroGraph.h"
 #include "../include/Edge.h"
 #include "../include/Station.h"
 int main(){
@@ -62,4 +63,16 @@ int main(){
          << " stations and "
          << loadedEdges.size()
          << " connections" << endl;
+    MetroGraph graph;
+    for (const auto& station : loadedStations) {
+        graph.addStation(station);
+    }
+    for (const auto& edge : loadedEdges) {
+        graph.addConnection(
+            edge.getFrom(),
+            edge.getTo(),
+            edge.getDistance()
+        );
+    }
+    
 }
