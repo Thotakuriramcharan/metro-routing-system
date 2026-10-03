@@ -7,6 +7,7 @@ struct RouteResult {
     bool found;
     vector<int> path;
     int stops;
+    double distance;
 };
 class RouteEngine {
 public:
@@ -14,6 +15,11 @@ public:
         const MetroGraph& graph,
         int source,
         int destination
+    );
+    RouteResult shortestDistanceRoute(
+    const MetroGraph& graph,
+    int source,
+    int destination
     );
 };
 #endif
