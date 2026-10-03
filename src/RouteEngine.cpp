@@ -25,7 +25,7 @@ RouteResult RouteEngine::minimumStopsRoute(const MetroGraph& graph,int source,in
         }
     }
     if (!visited[destination]) {
-        return {false, {}, -1, -1.0};
+        return {false, {}, -1.0, -1, 0, {}, "Minimum Stops"};
     }
     vector<int> path;
     int current = destination;
@@ -34,7 +34,7 @@ RouteResult RouteEngine::minimumStopsRoute(const MetroGraph& graph,int source,in
         current = parent[current];
     }
     reverse(path.begin(), path.end());
-    return {true, path, distance[destination], 0.0};
+    return {true,path,0.0,distance[destination],0,{},"Minimum Stops"};
 }
 RouteResult RouteEngine::shortestDistanceRoute( const MetroGraph& graph,int source,int destination){
     unordered_map<int, double> distance;
@@ -65,7 +65,7 @@ RouteResult RouteEngine::shortestDistanceRoute( const MetroGraph& graph,int sour
         }
     }
     if (!distance.count(destination)) {
-        return {false, {}, -1, -1.0};
+        return {false, {}, -1.0, -1, 0, {}, "Shortest Distance"};
     }
     vector<int> path;
     int current = destination;
@@ -74,5 +74,13 @@ RouteResult RouteEngine::shortestDistanceRoute( const MetroGraph& graph,int sour
         current = parent[current];
     }
     reverse(path.begin(), path.end());
-    return {true, path, 0, distance[destination]};
+    return {true,path,distance[destination],0,0,{},"Shortest Distance"};
+}
+RouteComparison RouteEngine::compareRoutes(const MetroGraph& graph,int source,int destination){
+    RouteComparison comparison;
+    comparison.bfsResult =
+        minimumStopsRoute(graph, source, destination);
+    comparison.dijkstraResult =
+        shortestDistanceRoute(graph, source, destination);
+    return comparison;
 }
