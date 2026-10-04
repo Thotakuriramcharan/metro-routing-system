@@ -5,7 +5,7 @@ using namespace std;
 #include "../include/Edge.h"
 #include "../include/Station.h"
 int main(){
-    ifstream file("data/mini_network.txt");
+    ifstream file("data/metro_network.txt");
     if (!file) {
         cout << "Could not open network file" << endl;
         return 1;
@@ -33,16 +33,25 @@ int main(){
             stringstream ss(line);
             string id;
             string name;
-            string lineName;
+            string lineNames;
             getline(ss, id, ',');
             getline(ss, name, ',');
-            getline(ss, lineName, ',');
-            if (id.empty() || name.empty() || lineName.empty()) {
+            getline(ss, lineNames, ',');
+            if (id.empty() || name.empty() || lineNames.empty()) {
                 cout << "Invalid station line: " << line << endl;
                 continue;
             }
             int stationId = stoi(id);
-            Station station(stationId, name, {lineName}, false);
+            vector<string> lines;
+            stringstream lineStream(lineNames);
+            string currentLine;
+            while (getline(lineStream, currentLine, '|')) {
+                if (!currentLine.empty()) {
+                    lines.push_back(currentLine);
+                }
+            }
+            bool isInterchange = lines.size() > 1;
+            Station station(stationId, name, lines, isInterchange);
             loadedStations.push_back(station);
         }
         if (readingConnections) {
