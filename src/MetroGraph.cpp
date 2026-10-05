@@ -16,3 +16,23 @@ vector<Edge> MetroGraph::neighbours(int stationId) const {
     }
     return it->second;
 }
+bool MetroGraph::removeStation(int stationId) {
+    auto it = adjacency.find(stationId);
+    if (it == adjacency.end()) {
+        return false;
+    }
+    adjacency.erase(it);
+    for (auto& [id, edges] : adjacency) {
+        edges.erase(
+            remove_if(
+                edges.begin(),
+                edges.end(),
+                [stationId](const Edge& edge) {
+                    return edge.getTo() == stationId;
+                }
+            ),
+            edges.end()
+        );
+    }
+    return true;
+}
