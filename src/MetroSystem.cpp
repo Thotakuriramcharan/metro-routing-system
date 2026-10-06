@@ -116,3 +116,163 @@ bool MetroSystem::reopenStation(int id) {
     graph.reopenStation(id);
     return true;
 }
+bool MetroSystem::saveNetwork(const string& filename) const {
+    ofstream file(filename);
+    if (!file) {
+        return false;
+    }
+    file << "#STATIONS\n";
+    for (const auto& station : stations) {
+        file << station.getId() << ",";
+        file << station.getName() << ",";
+        const auto lines = station.getLines();
+        for (size_t i = 0; i < lines.size(); ++i) {
+            if (i > 0) {
+                file << "|";
+            }
+            file << lines[i];
+        }
+        file << ",";
+        if (station.getStatus() == Status::OPEN) {
+            file << "OPEN";
+        } else {
+        file << "CLOSED";
+    }
+    file << "\n";
+    }
+    file << "\n#CONNECTIONS\n";
+    for (const auto& edge : listConnections()) {
+        file << edge.getFrom() << ",";
+        file << edge.getTo() << ",";
+        file << edge.getDistance() << ",";
+        if (edge.getStatus() == Status::OPEN) {
+            file << "OPEN";
+        } else {
+            file << "CLOSED";
+        }
+        file << "\n";
+    }
+    return true;
+}
+bool MetroSystem::loadNetwork(const string& filename) {
+    ifstream file(filename);
+    if (!file) {
+        return false;
+    }
+    string line;
+    bool readingStations = false;
+    bool readingConnections = false;
+    int lineNumber = 0;
+    while (getline(file, line)) {
+        lineNumber++;
+        if (line.empty()) {
+            continue;
+        }
+        if (line == "#STATIONS") {
+            readingStations = true;
+            readingConnections = false;
+            continue;
+        }
+        if (line == "#CONNECTIONS") {
+            readingStations = false;
+            readingConnections = true;
+            continue;
+        }
+        if (readingStations) {
+            stringstream ss(line);
+            string id;
+            string name;
+            string lineNames;
+            string status;
+            if (!getline(ss, id, ',') ||
+            !getline(ss, name, ',') ||
+            !getline(ss, lineNames, ',') ||
+            !getline(ss, status, ',')) {
+                cout << "Invalid station data at line " << lineNumber << endl;
+                return false;
+            }
+            int stationId;
+            try {
+                stationId = stoi(id);
+            } catch (...) {
+                cout << "Invalid station data at line " << lineNumber << endl;
+                return false;
+            }
+            vector<string> lines;
+            stringstream lineStream(lineNames);
+            string currentLine;
+            while (getline(lineStream, currentLine, '|')) {
+                if (!currentLine.empty()) {
+                    lines.push_back(currentLine);
+                }
+            }
+            if (lines.empty()) {
+                cout << "Invalid station data at line " << lineNumber << endl;
+                return false;
+            }
+            bool isInterchange = lines.size() > 1;
+            Station station(
+                stationId,
+                name,
+                lines,
+                isInterchange
+            );
+            if (status == "CLOSED") {
+                station.setClose();
+            } else if (status == "OPEN") {
+                station.setOpen();
+            } else {
+                cout << "Invalid station data at line " << lineNumber << endl;
+                return false;
+            }
+            if (!addStation(station)) {
+                cout << "Invalid station data at line " << lineNumber << endl;
+                return false;
+            }
+        }
+        if (readingConnections) {
+            stringstream ss(line);
+            string from;
+            string to;
+            string distance;
+            string status;
+            if (!getline(ss, from, ',') ||
+            !getline(ss, to, ',') ||
+            !getline(ss, distance, ',') ||
+            !getline(ss, status, ',')) {
+                cout << "Invalid connection data at line "
+                << lineNumber << endl;
+                return false;
+            }
+            int fromId;
+            int toId;
+            double distanceKm;
+            try {
+                fromId = stoi(from);
+                toId = stoi(to);
+                distanceKm = stod(distance);
+            } catch (...) {
+                cout << "Invalid connection values at line "
+                << lineNumber << endl;
+                return false;
+            }
+            if (!addConnection(fromId, toId, distanceKm)) {
+                cout << "Invalid connection at line "
+                << lineNumber << endl;
+                return false;
+            }
+            if (status == "CLOSED") {
+                if (!closeConnection(fromId, toId)) {
+                    cout << "Invalid connection state at line "
+                    << lineNumber << endl;
+                    return false;
+                }
+            } else if (status != "OPEN") {
+                cout << "Invalid connection status at line "
+                << lineNumber << endl;
+                return false;
+            }
+        }
+    }
+    return true;
+}

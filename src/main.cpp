@@ -84,5 +84,5 @@ int main(){
             edge.getDistance()
         );
     }
-    
+    return 0;
 }

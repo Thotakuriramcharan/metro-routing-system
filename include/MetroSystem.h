@@ -24,5 +24,7 @@ public:
     bool reopenConnection(int from, int to);
     vector<Edge> listConnections() const;
     const MetroGraph& getGraph() const;
+    bool saveNetwork(const string& filename) const;
+    bool loadNetwork(const string& filename);
 };
 #endif
