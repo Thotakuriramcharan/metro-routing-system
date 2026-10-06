@@ -14,7 +14,20 @@ vector<Edge> MetroGraph::neighbours(int stationId) const {
     if (it == adjacency.end()) {
         return {};
     }
-    return it->second;
+    if (closedStations.count(stationId)) {
+        return {};
+    }
+    vector<Edge> result;
+    for (const auto& edge : it->second) {
+        if (edge.getStatus() == Status::CLOSED) {
+            continue;
+        }
+        if (closedStations.count(edge.getTo())) {
+            continue;
+        }
+        result.push_back(edge);
+    }
+    return result;
 }
 bool MetroGraph::removeStation(int stationId) {
     auto it = adjacency.find(stationId);
@@ -88,4 +101,60 @@ vector<Edge> MetroGraph::listConnections() const {
         }
     }
     return connections;
+}
+bool MetroGraph::closeStation(int stationId) {
+    if (adjacency.find(stationId) == adjacency.end()) {
+        return false;
+    }
+    closedStations.insert(stationId);
+    return true;
+}
+bool MetroGraph::reopenStation(int stationId) {
+    if (adjacency.find(stationId) == adjacency.end()) {
+        return false;
+    }
+    closedStations.erase(stationId);
+    return true;
+}
+bool MetroGraph::closeConnection(int from, int to) {
+    auto fromIt = adjacency.find(from);
+    auto toIt = adjacency.find(to);
+    if (fromIt == adjacency.end() || toIt == adjacency.end()) {
+        return false;
+    }
+    bool found = false;
+    for (auto& edge : fromIt->second) {
+        if (edge.getTo() == to) {
+            edge.setClosed();
+            found = true;
+        }
+    }
+    for (auto& edge : toIt->second) {
+        if (edge.getTo() == from) {
+            edge.setClosed();
+            found = true;
+        }
+    }
+    return found;
+}
+bool MetroGraph::reopenConnection(int from, int to) {
+    auto fromIt = adjacency.find(from);
+    auto toIt = adjacency.find(to);
+    if (fromIt == adjacency.end() || toIt == adjacency.end()) {
+        return false;
+    }
+    bool found = false;
+    for (auto& edge : fromIt->second) {
+        if (edge.getTo() == to) {
+            edge.setOpen();
+            found = true;
+        }
+    }
+    for (auto& edge : toIt->second) {
+        if (edge.getTo() == from) {
+            edge.setOpen();
+            found = true;
+        }
+    }
+    return found;
 }

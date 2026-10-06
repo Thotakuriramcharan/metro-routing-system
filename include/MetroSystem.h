@@ -18,6 +18,10 @@ public:
     vector<Station> listStationsByLine(const string& line) const;
     bool addConnection(int from, int to, double distanceKm);
     bool removeConnection(int from, int to);
+    bool closeStation(int id);
+    bool reopenStation(int id);
+    bool closeConnection(int from, int to);
+    bool reopenConnection(int from, int to);
     vector<Edge> listConnections() const;
     const MetroGraph& getGraph() const;
 };

@@ -85,9 +85,34 @@ bool MetroSystem::removeConnection(int from, int to) {
     }
     return graph.removeConnection(from, to);
 }
+bool MetroSystem::closeConnection(int from, int to) {
+    return graph.closeConnection(from, to);
+}
+bool MetroSystem::reopenConnection(int from, int to) {
+    return graph.reopenConnection(from, to);
+}
 vector<Edge> MetroSystem::listConnections() const {
     return graph.listConnections();
 }
 const MetroGraph& MetroSystem::getGraph() const {
     return graph;
+}
+bool MetroSystem::closeStation(int id) {
+    Station* station = findStation(id);
+    if (station == nullptr) {
+        return false;
+    }
+    station->setClose();
+    graph.closeStation(id);
+    return true;
+}
+
+bool MetroSystem::reopenStation(int id) {
+    Station* station = findStation(id);
+    if (station == nullptr) {
+        return false;
+    }
+    station->setOpen();
+    graph.reopenStation(id);
+    return true;
 }
