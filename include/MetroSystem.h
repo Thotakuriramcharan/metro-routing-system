@@ -3,6 +3,7 @@
 #include <bits/stdc++.h>
 #include "MetroGraph.h"
 #include "Station.h"
+#include "Edge.h"
 using namespace std;
 class MetroSystem {
 private:
@@ -15,5 +16,9 @@ public:
     vector<Station> searchStationsByName(const string& query) const;
     vector<Station> listStations() const;
     vector<Station> listStationsByLine(const string& line) const;
+    bool addConnection(int from, int to, double distanceKm);
+    bool removeConnection(int from, int to);
+    vector<Edge> listConnections() const;
+    const MetroGraph& getGraph() const;
 };
 #endif

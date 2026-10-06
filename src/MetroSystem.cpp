@@ -60,3 +60,34 @@ bool MetroSystem::removeStation(int id) {
     }
     return false;
 }
+bool MetroSystem::addConnection(int from, int to, double distanceKm) {
+    if (findStation(from) == nullptr) {
+        return false;
+    }
+    if (findStation(to) == nullptr) {
+        return false;
+    }
+    if (from == to) {
+        return false;
+    }
+    if (graph.hasConnection(from, to)) {
+        return false;
+    }
+    if (distanceKm <= 0) {
+        return false;
+    }
+    graph.addConnection(from, to, distanceKm);
+    return true;
+}
+bool MetroSystem::removeConnection(int from, int to) {
+    if (!graph.hasConnection(from, to)) {
+        return false;
+    }
+    return graph.removeConnection(from, to);
+}
+vector<Edge> MetroSystem::listConnections() const {
+    return graph.listConnections();
+}
+const MetroGraph& MetroSystem::getGraph() const {
+    return graph;
+}

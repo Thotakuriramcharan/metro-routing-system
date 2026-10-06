@@ -12,5 +12,8 @@ public:
     void addConnection(int from, int to, double distanceKm);
     vector<Edge> neighbours(int stationId) const;
     bool removeStation(int stationId);
+    bool removeConnection(int from, int to);
+    bool hasConnection(int from, int to) const;
+    vector<Edge> listConnections() const;
 };
 #endif

@@ -36,3 +36,56 @@ bool MetroGraph::removeStation(int stationId) {
     }
     return true;
 }
+bool MetroGraph::hasConnection(int from, int to) const {
+    auto it = adjacency.find(from);
+    if (it == adjacency.end()) {
+        return false;
+    }
+    for (const auto& edge : it->second) {
+        if (edge.getTo() == to) {
+            return true;
+        }
+    }
+    return false;
+}
+bool MetroGraph::removeConnection(int from, int to) {
+    auto fromIt = adjacency.find(from);
+    auto toIt = adjacency.find(to);
+    if (fromIt == adjacency.end() || toIt == adjacency.end()) {
+        return false;
+    }
+    auto& fromEdges = fromIt->second;
+    fromEdges.erase(
+        remove_if(
+            fromEdges.begin(),
+            fromEdges.end(),
+            [to](const Edge& edge) {
+                return edge.getTo() == to;
+            }
+        ),
+        fromEdges.end()
+    );
+    auto& toEdges = toIt->second;
+    toEdges.erase(
+        remove_if(
+            toEdges.begin(),
+            toEdges.end(),
+            [from](const Edge& edge) {
+                return edge.getTo() == from;
+            }
+        ),
+        toEdges.end()
+    );
+    return true;
+}
+vector<Edge> MetroGraph::listConnections() const {
+    vector<Edge> connections;
+    for (const auto& [id, edges] : adjacency) {
+        for (const auto& edge : edges) {
+            if (edge.getFrom() < edge.getTo()) {
+                connections.push_back(edge);
+            }
+        }
+    }
+    return connections;
+}
