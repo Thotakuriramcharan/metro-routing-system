@@ -67,3 +67,36 @@ TEST(BFS, SameSourceDestination) {
     EXPECT_EQ(result.stops, 0);
     EXPECT_EQ(result.path, vector<int>({1}));
 }
+TEST(BFSTest, HandlesLargeStationIds) {
+    MetroGraph graph;
+
+    Station a(1001, "A", {"Blue"}, false);
+    Station b(1002, "B", {"Blue"}, false);
+
+    graph.addStation(a);
+    graph.addStation(b);
+    graph.addConnection(1001, 1002, 2.0);
+
+    RouteEngine engine;
+    RouteResult result = engine.minimumStopsRoute(graph, 1001, 1002);
+
+    EXPECT_TRUE(result.routeExists);
+    EXPECT_EQ(result.path, vector<int>({1001, 1002}));
+    EXPECT_EQ(result.stops, 1);
+}
+TEST(BFS, InvalidStationId) {
+    MetroGraph graph;
+
+    Station a(1, "A", {"Blue"}, false);
+    Station b(2, "B", {"Blue"}, false);
+
+    graph.addStation(a);
+    graph.addStation(b);
+    graph.addConnection(1, 2, 2.0);
+
+    RouteEngine engine;
+
+    RouteResult result = engine.minimumStopsRoute(graph, 1, 9999);
+
+    EXPECT_FALSE(result.routeExists);
+}

@@ -10,6 +10,7 @@ private:
     unordered_set<int> closedStations;
 public:
     void addStation(const Station& station);
+    bool hasStation(int stationId) const;
     void addConnection(int from, int to, double distanceKm);
     vector<Edge> neighbours(int stationId) const;
     bool removeStation(int stationId);

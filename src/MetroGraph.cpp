@@ -3,6 +3,9 @@
 void MetroGraph::addStation(const Station& station) {
     adjacency[station.getId()];
 }
+bool MetroGraph::hasStation(int stationId) const {
+    return adjacency.find(stationId) != adjacency.end();
+}
 void MetroGraph::addConnection(int from, int to, double distanceKm) {
     Edge edge1(from, to, distanceKm);
     Edge edge2(to, from, distanceKm);

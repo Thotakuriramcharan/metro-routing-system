@@ -159,6 +159,7 @@ bool MetroSystem::loadNetwork(const string& filename) {
     if (!file) {
         return false;
     }
+    MetroSystem temp;
     string line;
     bool readingStations = false;
     bool readingConnections = false;
@@ -185,18 +186,31 @@ bool MetroSystem::loadNetwork(const string& filename) {
             string lineNames;
             string status;
             if (!getline(ss, id, ',') ||
-            !getline(ss, name, ',') ||
-            !getline(ss, lineNames, ',') ||
-            !getline(ss, status, ',')) {
-                cout << "Invalid station data at line " << lineNumber << endl;
-                return false;
-            }
+                !getline(ss, name, ',') ||
+                !getline(ss, lineNames, ',') ||
+                !getline(ss, status)) {
+                    cout << "Invalid station data at line "
+                         << lineNumber << endl;
+                    return false;
+                }
+                if (status != "OPEN" && status != "CLOSED") {
+                    cout << "Invalid station data at line "
+                         << lineNumber << endl;
+                    return false;
+                }
             int stationId;
             try {
-                stationId = stoi(id);
+                size_t idPos;
+                stationId = stoi(id, &idPos);
+                if (idPos != id.size()) {
+                    cout << "Invalid station data at line "
+                         << lineNumber << endl;
+                         return false;
+                }
             } catch (...) {
-                cout << "Invalid station data at line " << lineNumber << endl;
-                return false;
+                cout << "Invalid station data at line "
+                     << lineNumber << endl;
+                     return false;
             }
             vector<string> lines;
             stringstream lineStream(lineNames);
@@ -225,9 +239,14 @@ bool MetroSystem::loadNetwork(const string& filename) {
                 cout << "Invalid station data at line " << lineNumber << endl;
                 return false;
             }
-            if (!addStation(station)) {
+            if (!temp.addStation(station)) {
                 cout << "Invalid station data at line " << lineNumber << endl;
                 return false;
+            }
+            if (status == "CLOSED") {
+                if (!temp.closeStation(stationId)) {
+                    return false;
+                }
             }
         }
         if (readingConnections) {
@@ -248,21 +267,31 @@ bool MetroSystem::loadNetwork(const string& filename) {
             int toId;
             double distanceKm;
             try {
-                fromId = stoi(from);
-                toId = stoi(to);
-                distanceKm = stod(distance);
+                size_t fromPos;
+                size_t toPos;
+                size_t distancePos;
+                fromId = stoi(from, &fromPos);
+                toId = stoi(to, &toPos);
+                distanceKm = stod(distance, &distancePos);
+                if (fromPos != from.size() ||
+                toPos != to.size() ||
+                distancePos != distance.size()) {
+                    cout << "Invalid connection values at line "
+                    << lineNumber << endl;
+                    return false;
+                }
             } catch (...) {
                 cout << "Invalid connection values at line "
                 << lineNumber << endl;
                 return false;
             }
-            if (!addConnection(fromId, toId, distanceKm)) {
+            if (!temp.addConnection(fromId, toId, distanceKm)) {
                 cout << "Invalid connection at line "
                 << lineNumber << endl;
                 return false;
             }
             if (status == "CLOSED") {
-                if (!closeConnection(fromId, toId)) {
+                if (!temp.closeConnection(fromId, toId)) {
                     cout << "Invalid connection state at line "
                     << lineNumber << endl;
                     return false;
@@ -274,5 +303,6 @@ bool MetroSystem::loadNetwork(const string& filename) {
             }
         }
     }
+    *this = temp;
     return true;
 }

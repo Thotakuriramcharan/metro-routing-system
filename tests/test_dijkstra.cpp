@@ -78,3 +78,19 @@ TEST(Dijkstra, CorrectTotalDistance) {
     EXPECT_EQ(result.path, vector<int>({1, 2, 3}));
     EXPECT_DOUBLE_EQ(result.totalDistanceKm, 6.0);
 }
+TEST(Dijkstra, InvalidStationId) {
+    MetroGraph graph;
+
+    Station a(1, "A", {"Blue"}, false);
+    Station b(2, "B", {"Blue"}, false);
+
+    graph.addStation(a);
+    graph.addStation(b);
+    graph.addConnection(1, 2, 2.0);
+
+    RouteEngine engine;
+
+    RouteResult result = engine.shortestDistanceRoute(graph, 1, 9999);
+
+    EXPECT_FALSE(result.routeExists);
+}

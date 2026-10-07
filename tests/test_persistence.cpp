@@ -10,7 +10,6 @@ TEST(PersistenceTest, RejectsMalformedStationLine) {
     MetroSystem system;
     EXPECT_FALSE(system.loadNetwork("data/malformed_station.txt"));
 }
-
 TEST(PersistenceTest, RejectsNonNumericDistance) {
     ofstream file("data/malformed_distance.txt");
     file << "#STATIONS\n";
@@ -21,6 +20,45 @@ TEST(PersistenceTest, RejectsNonNumericDistance) {
     file.close();
     MetroSystem system;
     EXPECT_FALSE(system.loadNetwork("data/malformed_distance.txt"));
+}
+TEST(PersistenceTest, RejectsPartiallyNumericDistance) {
+    ofstream file("data/partially_numeric_distance.txt");
+    file << "#STATIONS\n";
+    file << "1,Central,Blue,OPEN\n";
+    file << "2,Market,Blue,OPEN\n";
+    file << "#CONNECTIONS\n";
+    file << "1,2,12abc,OPEN\n";
+    file.close();
+    MetroSystem system;
+    EXPECT_FALSE(
+        system.loadNetwork("data/partially_numeric_distance.txt")
+    );
+}
+TEST(PersistenceTest, RejectsPartiallyNumericStationId) {
+    ofstream file("data/partially_numeric_station_id.txt");
+    file << "#STATIONS\n";
+    file << "12abc,Central,Blue,OPEN\n";
+    file << "#CONNECTIONS\n";
+    file.close();
+
+    MetroSystem system;
+
+    EXPECT_FALSE(
+        system.loadNetwork("data/partially_numeric_station_id.txt")
+    );
+}
+TEST(PersistenceTest, RejectsExtraStationFields) {
+    ofstream file("data/extra_station_fields.txt");
+    file << "#STATIONS\n";
+    file << "1,Central,Blue,OPEN,EXTRA\n";
+    file << "#CONNECTIONS\n";
+    file.close();
+
+    MetroSystem system;
+
+    EXPECT_FALSE(
+        system.loadNetwork("data/extra_station_fields.txt")
+    );
 }
 TEST(PersistenceTest, RejectsUnknownStationConnection) {
     ofstream file("data/unknown_station.txt");

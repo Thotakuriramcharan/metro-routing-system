@@ -1,12 +1,15 @@
 #include "../include/RouteEngine.h"
 RouteResult RouteEngine::minimumStopsRoute(const MetroGraph& graph,int source,int destination){
-    int n = 1000;
-    vector<int> visited(n, 0);
-    vector<int> parent(n, -1);
-    vector<int> distance(n, -1);
+    if (!graph.hasStation(source) || !graph.hasStation(destination)) {
+        return {false, {}, -1.0, -1, 0, {}, "Minimum Stops"};
+    }
+    unordered_set<int> visited;
+    unordered_map<int, int> parent;
+    unordered_map<int, int> distance;
     queue<int> q;
-    visited[source] = 1;
+    visited.insert(source);
     distance[source] = 0;
+    parent[source] = -1;
     q.push(source);
     while (!q.empty()) {
         int node = q.front();
@@ -16,15 +19,15 @@ RouteResult RouteEngine::minimumStopsRoute(const MetroGraph& graph,int source,in
         }
         for (const auto& edge : graph.neighbours(node)) {
             int next = edge.getTo();
-            if (!visited[next]) {
-                visited[next] = 1;
+            if (!visited.count(next)) {
+                visited.insert(next);
                 parent[next] = node;
                 distance[next] = distance[node] + 1;
                 q.push(next);
             }
         }
     }
-    if (!visited[destination]) {
+    if (!visited.count(destination)) {
         return {false, {}, -1.0, -1, 0, {}, "Minimum Stops"};
     }
     vector<int> path;
@@ -34,9 +37,12 @@ RouteResult RouteEngine::minimumStopsRoute(const MetroGraph& graph,int source,in
         current = parent[current];
     }
     reverse(path.begin(), path.end());
-    return {true,path,0.0,distance[destination],0,{},"Minimum Stops"};
+    return {true, path, 0.0, distance[destination], 0, {}, "Minimum Stops"};
 }
 RouteResult RouteEngine::shortestDistanceRoute( const MetroGraph& graph,int source,int destination){
+    if (!graph.hasStation(source) || !graph.hasStation(destination)) {
+        return {false, {}, -1.0, -1, 0, {}, "Shortest Distance"};
+    }
     unordered_map<int, double> distance;
     unordered_map<int, int> parent;
     unordered_map<int, bool> processed;
