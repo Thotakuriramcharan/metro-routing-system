@@ -184,5 +184,40 @@ The full network contains **51 stations and 54 connections**. A smaller fixture 
 ## Project Status
 Core routing, network management, disruption handling, persistence, CLI, testing, and benchmarking are implemented and verified.
 **Verification:** 8 test suites · 37 test cases · 100% CTest pass rate · 51 stations · 54 connections · 19 CLI operations.
+## Screenshots
+
+Screenshots will document the main CLI workflows and route results.
+
+## Demo
+
+Four scenarios: normal minimum-stops route; stops-vs-distance comparison; disruption with alternative routing; no available route after disruption. A recording can be added after capture.
+## Screenshots
+
+### Normal Route
+
+![Normal Route](screenshots/normal-route.png)
+
+### Route Comparison
+
+![Route Comparison](screenshots/route-comparison.png)
+
+### Station Closure and Alternative Route
+
+![Station Closure](screenshots/station-closure.png)
+
+### No Available Route
+
+![No Available Route](screenshots/no-route.png)
+
+## Demo
+
+A short demonstration of the four main scenarios:
+
+- Normal route
+- Route comparison
+- Station closure with alternative routing
+- No available route
+
+[Watch the demo](demo/metro-routing-demo.mp4)
 ## License
 See the `LICENSE` file for the project license.
