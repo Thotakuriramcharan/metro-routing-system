@@ -114,8 +114,10 @@ Dijkstra average time: 62.374 microseconds
 ```text
 metro-routing-system/
 ├── data/
+├── demo/
 ├── docs/
 ├── include/
+├── screenshots/
 ├── src/
 ├── tests/
 ├── CMakeLists.txt
@@ -168,10 +170,6 @@ Key choices: adjacency list, BFS for stops, Dijkstra for distance, separate `Met
 - GitHub Actions and cross-platform CI
 - Static analysis and code coverage
 - Network visualization and route export
-## Screenshots
-Screenshots will document the main CLI workflows and route results.
-## Demo
-Four scenarios: normal minimum-stops route; stops-vs-distance comparison; disruption with alternative routing; no available route after disruption. A recording can be added after capture.
 ## Limitations
 - Interchange calculation is approximate because edges do not store line IDs.
 - Benchmarking currently focuses on the 51-station network.
@@ -187,12 +185,6 @@ Core routing, network management, disruption handling, persistence, CLI, testing
 ## Screenshots
 
 Screenshots will document the main CLI workflows and route results.
-
-## Demo
-
-Four scenarios: normal minimum-stops route; stops-vs-distance comparison; disruption with alternative routing; no available route after disruption. A recording can be added after capture.
-## Screenshots
-
 ### Normal Route
 
 ![Normal Route](screenshots/normal-route.png)
@@ -211,6 +203,8 @@ Four scenarios: normal minimum-stops route; stops-vs-distance comparison; disrup
 
 ## Demo
 
+Four scenarios: normal minimum-stops route; stops-vs-distance comparison; disruption with alternative routing; no available route after disruption. A recording can be added after capture.
+
 A short demonstration of the four main scenarios:
 
 - Normal route
@@ -219,5 +213,6 @@ A short demonstration of the four main scenarios:
 - No available route
 
 [Watch the demo](demo/metro-routing-demo.mp4)
+
 ## License
 See the `LICENSE` file for the project license.
