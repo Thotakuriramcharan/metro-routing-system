@@ -1,10 +1,17 @@
 #include "../include/MetroGraph.h"
-
 void MetroGraph::addStation(const Station& station) {
     adjacency[station.getId()];
+    stations.insert_or_assign(station.getId(), station);
 }
 bool MetroGraph::hasStation(int stationId) const {
     return adjacency.find(stationId) != adjacency.end();
+}
+const Station* MetroGraph::getStation(int stationId) const {
+    auto it = stations.find(stationId);
+    if (it == stations.end()) {
+        return nullptr;
+    }
+    return &it->second;
 }
 void MetroGraph::addConnection(int from, int to, double distanceKm) {
     Edge edge1(from, to, distanceKm);
@@ -38,6 +45,7 @@ bool MetroGraph::removeStation(int stationId) {
         return false;
     }
     adjacency.erase(it);
+    stations.erase(stationId);
     for (auto& [id, edges] : adjacency) {
         edges.erase(
             remove_if(

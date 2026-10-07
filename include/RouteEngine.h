@@ -5,6 +5,12 @@
 #include "RouteResult.h"
 using namespace std;
 class RouteEngine {
+private:
+    int calculateInterchanges(
+        const MetroGraph& graph,
+        const vector<int>& path,
+        vector<string>& linesUsed
+    ) const;
 public:
     RouteResult minimumStopsRoute(
         const MetroGraph& graph,

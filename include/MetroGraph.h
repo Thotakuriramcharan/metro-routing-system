@@ -8,9 +8,11 @@ class MetroGraph {
 private:
     unordered_map<int, vector<Edge>> adjacency;
     unordered_set<int> closedStations;
+    unordered_map<int, Station> stations;
 public:
     void addStation(const Station& station);
     bool hasStation(int stationId) const;
+    const Station* getStation(int stationId) const;
     void addConnection(int from, int to, double distanceKm);
     vector<Edge> neighbours(int stationId) const;
     bool removeStation(int stationId);

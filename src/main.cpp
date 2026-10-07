@@ -1,12 +1,12 @@
-#include <bits/stdc++.h>
-using namespace std;
-#include "../include/MetroSystem.h"
+#include <iostream>
+#include "../include/CLI.h"
 int main() {
     MetroSystem system;
     if (!system.loadNetwork("data/metro_network.txt")) {
-        cout << "Could not load network" << endl;
+        std::cout << "Could not load network\n";
         return 1;
     }
-    cout << "Network loaded successfully" << endl;
+    CLI cli(system);
+    cli.run();
     return 0;
 }

@@ -14,6 +14,7 @@ add_executable(metro
     src/MetroGraph.cpp
     src/MetroSystem.cpp
     src/RouteEngine.cpp
+    src/CLI.cpp
 )
 
 include(FetchContent)

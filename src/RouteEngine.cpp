@@ -1,4 +1,67 @@
 #include "../include/RouteEngine.h"
+int RouteEngine::calculateInterchanges(
+    const MetroGraph& graph,
+    const vector<int>& path,
+    vector<string>& linesUsed
+) const {
+    linesUsed.clear();
+
+    if (path.empty()) {
+        return 0;
+    }
+
+    const Station* firstStation = graph.getStation(path[0]);
+
+    if (firstStation == nullptr) {
+        return 0;
+    }
+
+    vector<string> currentLines = firstStation->getLines();
+
+    if (currentLines.empty()) {
+        return 0;
+    }
+
+    // Start with the first available line.
+    string currentLine = currentLines[0];
+    linesUsed.push_back(currentLine);
+
+    int interchanges = 0;
+
+    for (size_t i = 1; i < path.size(); ++i) {
+        const Station* station = graph.getStation(path[i]);
+
+        if (station == nullptr) {
+            continue;
+        }
+
+        vector<string> stationLines = station->getLines();
+
+        // Continue on the current line if possible.
+        bool canContinue = false;
+
+        for (const string& line : stationLines) {
+            if (line == currentLine) {
+                canContinue = true;
+                break;
+            }
+        }
+
+        if (canContinue) {
+            continue;
+        }
+
+        // Current line is no longer available.
+        // Switch to the first line available at this station.
+        if (!stationLines.empty()) {
+            currentLine = stationLines[0];
+            interchanges++;
+            linesUsed.push_back(currentLine);
+        }
+    }
+
+    return interchanges;
+}
 RouteResult RouteEngine::minimumStopsRoute(const MetroGraph& graph,int source,int destination){
     if (!graph.hasStation(source) || !graph.hasStation(destination)) {
         return {false, {}, -1.0, -1, 0, {}, "Minimum Stops"};
@@ -37,7 +100,9 @@ RouteResult RouteEngine::minimumStopsRoute(const MetroGraph& graph,int source,in
         current = parent[current];
     }
     reverse(path.begin(), path.end());
-    return {true, path, 0.0, distance[destination], 0, {}, "Minimum Stops"};
+    vector<string> linesUsed;
+    int interchanges = calculateInterchanges(graph, path, linesUsed);
+    return {true,path,0.0,distance[destination],interchanges,linesUsed,"Minimum Stops"};
 }
 RouteResult RouteEngine::shortestDistanceRoute( const MetroGraph& graph,int source,int destination){
     if (!graph.hasStation(source) || !graph.hasStation(destination)) {
@@ -80,7 +145,9 @@ RouteResult RouteEngine::shortestDistanceRoute( const MetroGraph& graph,int sour
         current = parent[current];
     }
     reverse(path.begin(), path.end());
-    return {true,path,distance[destination],0,0,{},"Shortest Distance"};
+    vector<string> linesUsed;
+    int interchanges = calculateInterchanges(graph, path, linesUsed);
+    return {true,path,distance[destination],static_cast<int>(path.size()) - 1,interchanges,linesUsed,"Shortest Distance"};
 }
 RouteComparison RouteEngine::compareRoutes(const MetroGraph& graph,int source,int destination){
     RouteComparison comparison;
